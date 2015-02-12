@@ -1,0 +1,30 @@
+.slider {
+	position: relative;
+	display: block;
+	overflow: hidden;
+	z-index: 1;
+}
+.slide {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background-repeat: no-repeat;
+}
+.slide:first-child {
+	display: inline-block;
+}
+.slide span {
+	position: absolute;
+	bottom: 10%;
+	left: 0;
+	display: block;
+	width: 100%;
+	padding: 2em 0;
+	background-color: #efefef;
+	background-color: rgba(255,255,255,0.50);
+	text-align: center;
+	font-weight: bold;
+	z-index: 4;
+}
