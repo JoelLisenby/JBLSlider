@@ -10,14 +10,10 @@ Usage example
 
 Demo http://www.joellisenby.com/jblslider/
 
-head
 ```
 <script src="js/jquery-1.11.2.min.js"></script>
 <script src="js/jquery.jblSlider.js"></script>
-```
 
-body
-```
 <div class="slider" id="jblslider">
 <div class="slide" style="background-image: url('images/slide1.jpg')">
 <span>Slide 1 Phrase</span>
@@ -32,11 +28,6 @@ body
 <span>Slide 4 Phrase</span>
 </div>
 </div>
-
-<button id="prev" />Prev</button>
-<button id="next" />Next</button>
-<button id="play" />Play</button>
-<button id="pause" />Pause</button>
 
 <script>
 $("#jblslider").jblSlider({
