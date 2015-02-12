@@ -27,6 +27,7 @@ $.fn.jblSlider = function( options ) {
 		
 		jbl.prepSlides($(jbl.options.element).children()).done(function() {
 			jbl.play();
+			jbl.nav();
 			
 			jbl.slides[jbl.current].pos = {x: -Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0}
 			jbl.slides[jbl.next].pos = {x: -Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
@@ -59,6 +60,20 @@ $.fn.jblSlider = function( options ) {
 			});
 		});
 	};
+	
+	this.nav = function() {
+		$(jbl.options.element).append('<a href="#" class="nav-prev"></a><a href="#" class="nav-next"></a>');
+		$('.nav-prev').click(function() {
+			var cnt = Object.keys(jbl.slides).length;
+			var slide = (cnt == 0 ? 0 : (jbl.current > 0 ? jbl.current - 1 : cnt - 1) );
+			jbl.pause();
+			jbl.nextSlide(slide);
+		});
+		$('.nav-next').click(function() {
+			jbl.pause();
+			jbl.nextSlide();
+		});
+	}
 
 	this.prepSlides = function(slides) {
 		var loaded = 0;

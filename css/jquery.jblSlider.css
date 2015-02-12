@@ -4,6 +4,19 @@
 	overflow: hidden;
 	z-index: 1;
 }
+.slider .nav-prev, .slider .nav-next {
+	position: absolute;
+	display: inline-block;
+	width: 50px;
+	height: 50px;
+	bottom: 15%;
+	background: url('../images/svg-sprite-navigation.svg') no-repeat;
+	background-size: 100%;
+	z-index: 5;
+}
+.slider .nav-prev { left: 0; background-position: 0 -400px; }
+.slider .nav-next { right: 0; background-position: 0 -450px; }
+
 .slide {
 	display: none;
 	position: absolute;
