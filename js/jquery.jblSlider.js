@@ -51,12 +51,12 @@ $.fn.jblSlider = function( options ) {
 			var slide = (cnt == 0 ? 0 : (jbl.current > 0 ? jbl.current - 1 : cnt - 1) );
 			jbl.pause();
 			jbl.nextSlide(slide);
-			this.preventDefault();
+			(e.preventDefault) ? e.preventDefault() : e.returnValue = false;
 		});
-		$('.nav-next').click(function() {
+		$('.nav-next').click(function(e) {
 			jbl.pause();
 			jbl.nextSlide();
-			this.preventDefault();
+			(e.preventDefault) ? e.preventDefault() : e.returnValue = false;
 		});
 	}
 
