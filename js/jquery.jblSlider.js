@@ -41,23 +41,6 @@ $.fn.jblSlider = function( options ) {
 					$(jbl.slides[jbl.next].element).css({'background-position': jbl.slides[jbl.next].pos.x  +'px '+' 0px'});
 				}
 			});
-			
-			$('#prev').click(function() {
-				var cnt = Object.keys(jbl.slides).length;
-				var slide = (cnt == 0 ? 0 : (jbl.current > 0 ? jbl.current - 1 : cnt - 1) );
-				jbl.pause();
-				jbl.nextSlide(slide);
-			});
-			$('#next').click(function() {
-				jbl.pause();
-				jbl.nextSlide();
-			});
-			$('#play').click(function() {
-				jbl.play();
-			});
-			$('#pause').click(function() {
-				jbl.pause();
-			});
 		});
 	};
 	
@@ -68,10 +51,12 @@ $.fn.jblSlider = function( options ) {
 			var slide = (cnt == 0 ? 0 : (jbl.current > 0 ? jbl.current - 1 : cnt - 1) );
 			jbl.pause();
 			jbl.nextSlide(slide);
+			this.preventDefault();
 		});
 		$('.nav-next').click(function() {
 			jbl.pause();
 			jbl.nextSlide();
+			this.preventDefault();
 		});
 	}
 
