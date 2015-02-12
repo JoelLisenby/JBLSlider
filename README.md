@@ -7,6 +7,7 @@ Unique features
 
 Usage
 -----
+
 head
 ```
 <script src="js/jquery-1.11.2.min.js"></script>
@@ -36,6 +37,11 @@ body
 <button id="pause" />Pause</button>
 
 <script>
-$("#jblslider").jblSlider();
+$("#jblslider").jblSlider({
+	element: '.jblslider',
+	height: 300,
+	duration: 500,
+  delay: 5000
+});
 </script>
 ```
