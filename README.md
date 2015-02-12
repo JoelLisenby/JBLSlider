@@ -8,9 +8,11 @@ Unique features
 Usage
 -----
 <head>
+```
   <script src="js/jquery-1.11.2.min.js"></script>
   <script src="js/jquery.jblSlider.js"></script>
-
+```
+```
 <body>
   <div class="slider" id="jblslider">
   <div class="slide" style="background-image: url('images/slide1.jpg')">
@@ -35,3 +37,4 @@ Usage
   <script>
   $("#jblslider").jblSlider();
   </script>
+```
