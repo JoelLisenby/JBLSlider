@@ -5,7 +5,7 @@ Unique features
 ---------------
 * Fixed height
 
-Usage
+Usage example
 -----
 
 head
