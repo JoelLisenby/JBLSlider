@@ -11,7 +11,7 @@ $.fn.jblSlider = function( options ) {
 		duration: 500,
 		delay: 5000
 	};
-	this.options = $.extend({}, this.defaults, options);
+	this.options = $.extend({}, options, this.defaults);
 	this.slider = $(this.options.element);
 	this.slides = {};
 	this.slidesInterval = null;
@@ -33,12 +33,12 @@ $.fn.jblSlider = function( options ) {
 			jbl.slides[jbl.next].pos = {x: -Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
 			
 			$(window).resize(function() {
-				jbl.slides[jbl.current].pos.x = -Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2);
-				jbl.slides[jbl.next].pos.x = -Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2);
+				jbl.slides[jbl.current].pos = {x: -Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
+				jbl.slides[jbl.next].pos = {x: -Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
 				
 				if(!jbl.animating) {
-					$(jbl.slides[jbl.current].element).css({'background-position': jbl.slides[jbl.current].pos.x +'px '+' 0px'});
-					$(jbl.slides[jbl.next].element).css({'background-position': jbl.slides[jbl.next].pos.x  +'px '+' 0px'});
+					$(jbl.slides[jbl.current].element).css({'background-position': jbl.slides[jbl.current].pos.x +'px '+' '+ jbl.slides[jbl.current].pos.y +'px'});
+					$(jbl.slides[jbl.next].element).css({'background-position': jbl.slides[jbl.next].pos.x  +'px '+' '+ jbl.slides[jbl.next].pos.y +'0px'});
 				}
 			});
 		});
@@ -46,7 +46,7 @@ $.fn.jblSlider = function( options ) {
 	
 	this.nav = function() {
 		$(jbl.options.element).append('<a href="#" class="nav-prev"></a><a href="#" class="nav-next"></a>');
-		$('.nav-prev').click(function() {
+		$('.nav-prev').click(function(e) {
 			var cnt = Object.keys(jbl.slides).length;
 			var slide = (cnt == 0 ? 0 : (jbl.current > 0 ? jbl.current - 1 : cnt - 1) );
 			jbl.pause();
@@ -147,18 +147,18 @@ $.fn.jblSlider = function( options ) {
 			var percent = jbl.timeElapsed / jbl.options.duration;
 			percent = percent > 1.0 ? 1.0 : percent;
 			
-			jbl.slides[jbl.current].pos.x = Math.round(jbl.slides[jbl.current].width * percent) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2);
-			jbl.slides[jbl.next].pos.x = -jbl.slides[jbl.next].width + Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2);
+			jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * percent) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
+			jbl.slides[jbl.next].pos = {x: -jbl.slides[jbl.next].width + Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
 			
 			$(jbl.slides[jbl.current].element).children('span').hide();
 			$(jbl.slides[jbl.next].element).show();
 			$(jbl.slides[jbl.next].element).children('span').show();
 			$(jbl.slides[jbl.current].element).css({
-				'background-position': jbl.slides[jbl.current].pos.x+'px',
+				'background-position': jbl.slides[jbl.current].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
 				'z-index': 2
 			});
 			$(jbl.slides[jbl.next].element).css({
-				'background-position': jbl.slides[jbl.next].pos.x+'px',
+				'background-position': jbl.slides[jbl.next].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
 				'z-index': 3
 			});
 			
