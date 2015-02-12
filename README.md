@@ -8,6 +8,8 @@ Unique features
 Usage example
 -----
 
+Demo http://www.joellisenby.com/jblslider/
+
 head
 ```
 <script src="js/jquery-1.11.2.min.js"></script>
