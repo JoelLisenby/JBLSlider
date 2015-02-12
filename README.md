@@ -41,7 +41,7 @@ $("#jblslider").jblSlider({
 	element: '.jblslider',
 	height: 300,
 	duration: 500,
-  delay: 5000
+	delay: 5000
 });
 </script>
 ```
