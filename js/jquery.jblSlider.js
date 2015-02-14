@@ -11,7 +11,7 @@ $.fn.jblSlider = function( options ) {
 		duration: 500,
 		delay: 5000
 	};
-	this.options = $.extend({}, options, this.defaults);
+	this.options = $.extend({}, this.defaults, options);
 	this.slider = $(this.options.element);
 	this.slides = {};
 	this.slidesInterval = null;
