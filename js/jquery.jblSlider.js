@@ -130,10 +130,8 @@ $.fn.jblSlider = function( options ) {
 	};
 	
 	this.animate = function() {
+		var cnt = Object.keys(jbl.slides).length;
 		jbl.timeElapsed = 0.0;
-		
-		jbl.slides[jbl.current].pos = {x: -Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0}
-		jbl.slides[jbl.next].pos = {x: -Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
 		
 		var interval = setInterval(function() {
 			if(jbl.timeStart == 0) {
@@ -147,9 +145,27 @@ $.fn.jblSlider = function( options ) {
 			
 			var percent = jbl.timeElapsed / jbl.options.duration;
 			percent = percent > 1.0 ? 1.0 : percent;
+			console.log(jbl.current, jbl.next);
 			
-			jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * percent) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
-			jbl.slides[jbl.next].pos = {x: -jbl.slides[jbl.next].width + Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
+			var slideLeft = function() {
+				jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * percent * -1) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
+				jbl.slides[jbl.next].pos = {x: jbl.slides[jbl.next].width - Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
+			}
+			
+			var slideRight = function() {
+				jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * percent) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
+				jbl.slides[jbl.next].pos = {x: -jbl.slides[jbl.next].width + Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
+			}
+			
+			if(jbl.current == 0 && jbl.next == cnt - 1) {
+				slideRight();
+			} else if(jbl.current == cnt - 1 && jbl.next == 0) {
+				slideLeft();
+			} else if(jbl.current > jbl.next) {
+				slideRight();
+			} else {
+				slideLeft();
+			}
 			
 			$(jbl.slides[jbl.current].element).children('span').hide();
 			$(jbl.slides[jbl.next].element).show();
