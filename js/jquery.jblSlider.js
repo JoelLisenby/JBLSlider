@@ -32,12 +32,6 @@ Responsive. Fixed height option.
 $.fn.jblSlider = function( options ) {
 	this.animating = false;
 	this.animationFrame = null;
-	this.defaults = {
-		element: '.jblslider',
-		height: 300,
-		duration: 500,
-		delay: 5000
-	};
 	this.options = {};
 	this.slider = $(this.options.element);
 	this.slides = {};
@@ -50,7 +44,12 @@ $.fn.jblSlider = function( options ) {
 	var jbl = this;
 	
 	this.init = function(element) {
-		jbl.options = $.extend({}, this.defaults, options);
+		jbl.options = $.extend({
+			element: '.jblslider',
+			height: 300,
+			duration: 500,
+			delay: 5000
+		}, options);
 		jbl.options.element = element;
 		
 		jbl.prepSlides($(jbl.options.element).children()).done(function() {
