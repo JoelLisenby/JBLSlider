@@ -1,6 +1,33 @@
 /* JBL Slider by Joel Lisenby 
 Responsive. Fixed height option.
 */
+
+// requestAnimationFrame shim (https://gist.github.com/paulirish/1579671)
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] 
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+ 
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+}());
+
 (function ( $ ) {
 $.fn.jblSlider = function( options ) {
 	this.animating = false;
@@ -130,64 +157,62 @@ $.fn.jblSlider = function( options ) {
 	};
 	
 	this.animate = function() {
-		var cnt = Object.keys(jbl.slides).length;
+		jbl.animationFrame = requestAnimationFrame(jbl.animate);
 		jbl.timeElapsed = 0.0;
+		var cnt = Object.keys(jbl.slides).length;
 		
-		var interval = setInterval(function() {
-			if(jbl.timeStart == 0) {
-				jbl.timeStart = new Date().getTime();
-			}
-			jbl.animating = true;
-			var t = new Date().getTime();
-			
-			jbl.paused = false;
-			jbl.timeElapsed = t - jbl.timeStart;
-			
-			var percent = jbl.timeElapsed / jbl.options.duration;
-			percent = percent > 1.0 ? 1.0 : percent;
-			console.log(jbl.current, jbl.next);
-			
-			var slideLeft = function() {
-				jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * percent * -1) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
-				jbl.slides[jbl.next].pos = {x: jbl.slides[jbl.next].width - Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
-			}
-			
-			var slideRight = function() {
-				jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * percent) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
-				jbl.slides[jbl.next].pos = {x: -jbl.slides[jbl.next].width + Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
-			}
-			
-			if(jbl.current == 0 && jbl.next == cnt - 1) {
-				slideRight();
-			} else if(jbl.current == cnt - 1 && jbl.next == 0) {
-				slideLeft();
-			} else if(jbl.current > jbl.next) {
-				slideRight();
-			} else {
-				slideLeft();
-			}
-			
-			$(jbl.slides[jbl.current].element).children('span').hide();
-			$(jbl.slides[jbl.next].element).show();
-			$(jbl.slides[jbl.next].element).children('span').show();
-			$(jbl.slides[jbl.current].element).css({
-				'background-position': jbl.slides[jbl.current].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
-				'z-index': 2
-			});
-			$(jbl.slides[jbl.next].element).css({
-				'background-position': jbl.slides[jbl.next].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
-				'z-index': 3
-			});
-			
-			if(percent >= 1) {
-				$(jbl.slides[jbl.current].element).hide();
-				clearInterval(interval);
-				jbl.timeStart = 0;
-				jbl.timeElapsed = 0;
-				jbl.current = jbl.next;
-				jbl.animating = false;
-			}
-		}, 1000 / 60);
+		if(jbl.timeStart == 0) {
+			jbl.timeStart = new Date().getTime();
+		}
+		jbl.animating = true;
+		var t = new Date().getTime();
+		
+		jbl.paused = false;
+		jbl.timeElapsed = t - jbl.timeStart;
+		
+		var percent = jbl.timeElapsed / jbl.options.duration;
+		percent = percent > 1.0 ? 1.0 : percent;
+		
+		var slideLeft = function() {
+			jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * percent * -1) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
+			jbl.slides[jbl.next].pos = {x: jbl.slides[jbl.next].width - Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
+		}
+		
+		var slideRight = function() {
+			jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * percent) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
+			jbl.slides[jbl.next].pos = {x: -jbl.slides[jbl.next].width + Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
+		}
+		
+		if(jbl.current == 0 && jbl.next == cnt - 1) {
+			slideRight();
+		} else if(jbl.current == cnt - 1 && jbl.next == 0) {
+			slideLeft();
+		} else if(jbl.current > jbl.next) {
+			slideRight();
+		} else {
+			slideLeft();
+		}
+		
+		$(jbl.slides[jbl.current].element).children('span').hide();
+		$(jbl.slides[jbl.next].element).show();
+		$(jbl.slides[jbl.next].element).children('span').show();
+		$(jbl.slides[jbl.current].element).css({
+			'background-position': jbl.slides[jbl.current].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
+			'z-index': 2
+		});
+		$(jbl.slides[jbl.next].element).css({
+			'background-position': jbl.slides[jbl.next].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
+			'z-index': 3
+		});
+		
+		if(percent >= 1) {
+			cancelAnimationFrame(jbl.animationFrame);
+			$(jbl.slides[jbl.current].element).hide();
+			jbl.timeStart = 0;
+			jbl.timeElapsed = 0;
+			jbl.current = jbl.next;
+			jbl.animating = false;
+		}
 	};
 	
 	return this.each(function() {
