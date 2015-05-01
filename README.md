@@ -32,6 +32,7 @@ Demo http://www.joellisenby.com/jblslider/
 <script>
 $("#jblslider").jblSlider({
 	element: '.jblslider',
+	animationType: 'fade',
 	height: 300,
 	duration: 500,
 	delay: 5000
