@@ -3,7 +3,7 @@ Responsive. Fixed height option.
 */
 
 // requestAnimationFrame shim (https://gist.github.com/paulirish/1579671)
-(function() {
+jQuery(document).ready(function($) {
     var lastTime = 0;
     var vendors = ['ms', 'moz', 'webkit', 'o'];
     for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
@@ -12,7 +12,7 @@ Responsive. Fixed height option.
                                    || window[vendors[x]+'CancelRequestAnimationFrame'];
     }
  
-    if (!window.requestAnimationFrame)
+    if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = function(callback, element) {
             var currTime = new Date().getTime();
             var timeToCall = Math.max(0, 16 - (currTime - lastTime));
@@ -21,14 +21,16 @@ Responsive. Fixed height option.
             lastTime = currTime + timeToCall;
             return id;
         };
+	};
  
-    if (!window.cancelAnimationFrame)
+    if (!window.cancelAnimationFrame) {
         window.cancelAnimationFrame = function(id) {
             clearTimeout(id);
         };
+	};
 }());
 
-(function ( $ ) {
+jQuery(document).ready(function($) {
 $.fn.jblSlider = function( options ) {
 	this.animating = false;
 	this.animationFrame = null;
@@ -46,8 +48,9 @@ $.fn.jblSlider = function( options ) {
 	this.init = function(element) {
 		jbl.options = $.extend({
 			element: '.jblslider',
+			animationType: 'fade',
 			height: 300,
-			duration: 500,
+			duration: 1000,
 			delay: 5000
 		}, options);
 		jbl.options.element = element;
@@ -182,27 +185,54 @@ $.fn.jblSlider = function( options ) {
 			jbl.slides[jbl.next].pos = {x: -jbl.slides[jbl.next].width + Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
 		}
 		
-		if(jbl.current == 0 && jbl.next == cnt - 1) {
-			slideRight();
-		} else if(jbl.current == cnt - 1 && jbl.next == 0) {
-			slideLeft();
-		} else if(jbl.current > jbl.next) {
-			slideRight();
-		} else {
-			slideLeft();
+		var fade = function() {
+			jbl.slides[jbl.current].opacity = 1 - percent;
+			jbl.slides[jbl.next].opacity = 1 * percent;
 		}
 		
-		$(jbl.slides[jbl.current].element).children('span').hide();
-		$(jbl.slides[jbl.next].element).show();
-		$(jbl.slides[jbl.next].element).children('span').show();
-		$(jbl.slides[jbl.current].element).css({
-			'background-position': jbl.slides[jbl.current].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
-			'z-index': 2
-		});
-		$(jbl.slides[jbl.next].element).css({
-			'background-position': jbl.slides[jbl.next].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
-			'z-index': 3
-		});
+		switch(jbl.options.animationType) {
+			case 'slide':
+				if(jbl.current == 0 && jbl.next == cnt - 1) {
+					slideRight();
+				} else if(jbl.current == cnt - 1 && jbl.next == 0) {
+					slideLeft();
+				} else if(jbl.current > jbl.next) {
+					slideRight();
+				} else {
+					slideLeft();
+				}
+				
+				$(jbl.slides[jbl.current].element).children('span').hide();
+				$(jbl.slides[jbl.next].element).show();
+				$(jbl.slides[jbl.next].element).children('span').show();
+				$(jbl.slides[jbl.current].element).css({
+					'background-position': jbl.slides[jbl.current].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
+					'z-index': 2
+				});
+				$(jbl.slides[jbl.next].element).css({
+					'background-position': jbl.slides[jbl.next].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
+					'z-index': 3
+				});
+				break;
+			case 'fade':
+			default:
+				fade();
+				if(percent >= 1) {
+					$(jbl.slides[jbl.current].element).children('span').hide();
+				};
+				
+				$(jbl.slides[jbl.next].element).show();
+				$(jbl.slides[jbl.next].element).children('span').show();
+				$(jbl.slides[jbl.current].element).css({
+					'opacity': jbl.slides[jbl.current].opacity,
+					'z-index': 2
+				});
+				$(jbl.slides[jbl.next].element).css({
+					'opacity': jbl.slides[jbl.next].opacity,
+					'z-index': 3
+				});
+				break;
+		}
 		
 		if(percent >= 1) {
 			cancelAnimationFrame(jbl.animationFrame);
