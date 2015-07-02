@@ -1,9 +1,9 @@
 /* JBL Slider by Joel Lisenby 
-Responsive. Fixed height option.
+Responsive slider with partial cropping for safe area support.
 */
 
 // requestAnimationFrame shim (https://gist.github.com/paulirish/1579671)
-(function() {
+jQuery(document).ready(function($) {
     var lastTime = 0;
     var vendors = ['ms', 'moz', 'webkit', 'o'];
     for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
@@ -12,7 +12,7 @@ Responsive. Fixed height option.
                                    || window[vendors[x]+'CancelRequestAnimationFrame'];
     }
  
-    if (!window.requestAnimationFrame)
+    if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = function(callback, element) {
             var currTime = new Date().getTime();
             var timeToCall = Math.max(0, 16 - (currTime - lastTime));
@@ -21,14 +21,16 @@ Responsive. Fixed height option.
             lastTime = currTime + timeToCall;
             return id;
         };
+	};
  
-    if (!window.cancelAnimationFrame)
+    if (!window.cancelAnimationFrame) {
         window.cancelAnimationFrame = function(id) {
             clearTimeout(id);
         };
+	};
 }());
 
-(function ( $ ) {
+jQuery(document).ready(function($) {
 $.fn.jblSlider = function( options ) {
 	this.animating = false;
 	this.animationFrame = null;
@@ -45,12 +47,17 @@ $.fn.jblSlider = function( options ) {
 	
 	this.init = function(element) {
 		jbl.options = $.extend({
-			element: '.jblslider',
-			height: 300,
-			duration: 500,
-			delay: 5000
+			element: element,
+			animationType: 'fade',
+			width: 1400,
+			height: 400,
+			safe_area: 640,
+			duration: 1000,
+			delay: 5000,
+			resume: 20000
 		}, options);
-		jbl.options.element = element;
+		
+		jbl.bgWidth();
 		
 		jbl.prepSlides($(jbl.options.element).children()).done(function() {
 			jbl.play();
@@ -60,15 +67,23 @@ $.fn.jblSlider = function( options ) {
 			jbl.slides[jbl.next].pos = {x: -Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
 			
 			$(window).resize(function() {
-				jbl.slides[jbl.current].pos = {x: -Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
-				jbl.slides[jbl.next].pos = {x: -Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
-				
-				if(!jbl.animating) {
-					$(jbl.slides[jbl.current].element).css({'background-position': jbl.slides[jbl.current].pos.x +'px '+' '+ jbl.slides[jbl.current].pos.y +'px'});
-					$(jbl.slides[jbl.next].element).css({'background-position': jbl.slides[jbl.next].pos.x  +'px '+' '+ jbl.slides[jbl.next].pos.y +'0px'});
-				}
+				jbl.bgWidth();
 			});
 		});
+	};
+	
+	this.bgWidth = function() {
+		var current_width = $('main').innerWidth();
+		var p = current_width / jbl.options.safe_area;
+		var nw = jbl.options.width;
+		var nh = jbl.options.height;
+		if(p <= 1) {
+			nw = jbl.options.width * p;
+			nh = jbl.options.height * p;
+		}
+		
+		$('.slider').css('height', nh +'px');
+		$('.slide').css('background-size', nw +'px');
 	};
 	
 	this.nav = function() {
@@ -77,21 +92,23 @@ $.fn.jblSlider = function( options ) {
 			var cnt = Object.keys(jbl.slides).length;
 			var slide = (cnt == 0 ? 0 : (jbl.current > 0 ? jbl.current - 1 : cnt - 1) );
 			jbl.pause();
+			setTimeout(jbl.play, jbl.options.resume);
 			jbl.nextSlide(slide);
 			(e.preventDefault) ? e.preventDefault() : e.returnValue = false;
 		});
 		$('.nav-next').click(function(e) {
 			jbl.pause();
+			setTimeout(jbl.play, jbl.options.resume);
 			jbl.nextSlide();
 			(e.preventDefault) ? e.preventDefault() : e.returnValue = false;
 		});
-	}
+	};
 
 	this.prepSlides = function(slides) {
 		var loaded = 0;
 		var postaction = function(){};
 		
-		$(jbl.options.element).css('height',jbl.options.height);
+		$(jbl.options.element).css('height',jbl.options.height+'px');
 		
 		// prep slide and increment
 		function incImg() {
@@ -104,11 +121,6 @@ $.fn.jblSlider = function( options ) {
 						height: img.height
 					};
 					var sposx = -Math.round((img.width - $(slide).width()) / 2);
-					$(jbl.slides[i].element).css({
-						'max-width': img.width,
-						'height': jbl.options.height,
-						'background-position': sposx +'px '+' 0px'
-					});
 				}
 				
 				postaction();
@@ -133,6 +145,7 @@ $.fn.jblSlider = function( options ) {
 	};
 	
 	this.play = function() {
+		clearInterval(jbl.slidesInterval);
 		jbl.slidesInterval = setInterval(function() {
 			jbl.nextSlide();
 		}, jbl.options.delay);
@@ -140,7 +153,7 @@ $.fn.jblSlider = function( options ) {
 	
 	this.pause = function() {
 		clearInterval(jbl.slidesInterval);
-	}
+	};
 	
 	this.nextSlide = function(next) {
 		var cnt = Object.keys(jbl.slides).length;
@@ -170,39 +183,51 @@ $.fn.jblSlider = function( options ) {
 		jbl.timeElapsed = t - jbl.timeStart;
 		
 		var percent = jbl.timeElapsed / jbl.options.duration;
-		percent = percent > 1.0 ? 1.0 : percent;
+		jbl.ap = percent > 1.0 ? 1.0 : percent;
 		
-		var slideLeft = function() {
-			jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * percent * -1) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
-			jbl.slides[jbl.next].pos = {x: jbl.slides[jbl.next].width - Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
+		switch(jbl.options.animationType) {
+			case 'slide':
+				if(jbl.current == 0 && jbl.next == cnt - 1) {
+					jbl.slideRight();
+				} else if(jbl.current == cnt - 1 && jbl.next == 0) {
+					jbl.slideLeft();
+				} else if(jbl.current > jbl.next) {
+					jbl.slideRight();
+				} else {
+					jbl.slideLeft();
+				}
+				
+				$(jbl.slides[jbl.current].element).children('span').hide();
+				$(jbl.slides[jbl.next].element).show();
+				$(jbl.slides[jbl.next].element).children('span').show();
+				$(jbl.slides[jbl.current].element).css({
+					'background-position': jbl.slides[jbl.current].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
+					'z-index': 2
+				});
+				$(jbl.slides[jbl.next].element).css({
+					'background-position': jbl.slides[jbl.next].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
+					'z-index': 3
+				});
+				break;
+			case 'fade':
+			default:
+				jbl.fade();
+				if(percent >= 1) {
+					$(jbl.slides[jbl.current].element).children('span').hide();
+				};
+				
+				$(jbl.slides[jbl.next].element).show();
+				$(jbl.slides[jbl.next].element).children('span').show();
+				$(jbl.slides[jbl.current].element).css({
+					'opacity': jbl.slides[jbl.current].opacity,
+					'z-index': 2
+				});
+				$(jbl.slides[jbl.next].element).css({
+					'opacity': jbl.slides[jbl.next].opacity,
+					'z-index': 3
+				});
+				break;
 		}
-		
-		var slideRight = function() {
-			jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * percent) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
-			jbl.slides[jbl.next].pos = {x: -jbl.slides[jbl.next].width + Math.round(jbl.slides[jbl.next].width * percent) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
-		}
-		
-		if(jbl.current == 0 && jbl.next == cnt - 1) {
-			slideRight();
-		} else if(jbl.current == cnt - 1 && jbl.next == 0) {
-			slideLeft();
-		} else if(jbl.current > jbl.next) {
-			slideRight();
-		} else {
-			slideLeft();
-		}
-		
-		$(jbl.slides[jbl.current].element).children('span').hide();
-		$(jbl.slides[jbl.next].element).show();
-		$(jbl.slides[jbl.next].element).children('span').show();
-		$(jbl.slides[jbl.current].element).css({
-			'background-position': jbl.slides[jbl.current].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
-			'z-index': 2
-		});
-		$(jbl.slides[jbl.next].element).css({
-			'background-position': jbl.slides[jbl.next].pos.x+'px'+' '+ jbl.slides[jbl.current].pos.y +'px',
-			'z-index': 3
-		});
 		
 		if(percent >= 1) {
 			cancelAnimationFrame(jbl.animationFrame);
@@ -213,6 +238,21 @@ $.fn.jblSlider = function( options ) {
 			jbl.animating = false;
 		}
 	};
+	
+	this.slideLeft = function() {
+		jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * jbl.ap * -1) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
+		jbl.slides[jbl.next].pos = {x: jbl.slides[jbl.next].width - Math.round(jbl.slides[jbl.next].width * jbl.ap) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
+	}
+	
+	this.slideRight = function() {
+		jbl.slides[jbl.current].pos = {x: Math.round(jbl.slides[jbl.current].width * jbl.ap) - Math.round((jbl.slides[jbl.current].width - $(jbl.slides[jbl.current].element).width()) / 2), y: 0};
+		jbl.slides[jbl.next].pos = {x: -jbl.slides[jbl.next].width + Math.round(jbl.slides[jbl.next].width * jbl.ap) - Math.round((jbl.slides[jbl.next].width - $(jbl.slides[jbl.next].element).width()) / 2), y: 0};
+	}
+	
+	this.fade = function() {
+		jbl.slides[jbl.current].opacity = 1 - jbl.ap;
+		jbl.slides[jbl.next].opacity = 1 * jbl.ap;
+	}
 	
 	return this.each(function() {
 		jbl.init(this);

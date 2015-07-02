@@ -3,14 +3,15 @@
 	display: block;
 	overflow: hidden;
 	z-index: 1;
+	width: 100%;
 }
 .slider .nav-prev, .slider .nav-next {
 	position: absolute;
 	display: inline-block;
 	width: 50px;
 	height: 50px;
-	bottom: 15%;
-	background: url('../images/svg-sprite-navigation.svg') no-repeat;
+	bottom: 12px;
+	background: url('svg-sprite-navigation.svg') no-repeat;
 	background-size: 100%;
 	z-index: 5;
 }
@@ -23,20 +24,29 @@
 	top: 0;
 	left: 0;
 	width: 100%;
+	height: 100%;
+	background-position: top center;
 	background-repeat: no-repeat;
 }
 .slide:first-child {
 	display: inline-block;
 }
-.slide span {
-	position: absolute;
-	bottom: 10%;
-	left: 0;
+.slide a {
 	display: block;
 	width: 100%;
-	padding: 2em 0;
+	height: 100%;
+	color: #000;
+	text-decoration: none;
+}
+.slide span {
+	position: absolute;
+	bottom: 14px;
+	left: 0;
+	display: block;
+	width: calc(100% - 100px);
+	padding: 14px 50px;
 	background-color: #efefef;
-	background-color: rgba(255,255,255,0.50);
+	background-color: rgba(255,255,255,0.75);
 	text-align: center;
 	font-weight: bold;
 	z-index: 4;

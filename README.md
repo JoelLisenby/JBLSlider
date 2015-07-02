@@ -8,33 +8,48 @@ Unique features
 Usage example
 -----
 
-Demo http://www.joellisenby.com/jblslider/
+Live JBLSLider Demo: http://www.joellisenby.com/jblslider/
 
 ```
-<script src="js/jquery-1.11.2.min.js"></script>
-<script src="js/jquery.jblSlider.js"></script>
+<main>
 
 <div class="slider" id="jblslider">
-<div class="slide" style="background-image: url('images/slide1.jpg')">
-<span>Slide 1 Phrase</span>
+<div class="slide" style="background-image: url('slide1.jpg');">
+<span class="caption"><a href="#">Slide 1 Caption Text</a></span>
+<a href="#"></a>
 </div>
-<div class="slide" style="background-image: url('images/slide2.jpg')">
-<span>Slide 2 Phrase</span>
+<div class="slide" style="background-image: url('slide2.jpg');">
+<span class="caption"><a href="#">Slide 2 Caption Text</a></span>
+<a href="#"></a>
 </div>
-<div class="slide" style="background-image: url('images/slide3.jpg')">
-<span>Slide 3 Phrase</span>
+<div class="slide" style="background-image: url('slide3.jpg');">
+<span class="caption"><a href="#">Slide 3 Caption Text</a></span>
+<a href="#"></a>
 </div>
-<div class="slide" style="background-image: url('images/slide4.jpg')">
-<span>Slide 4 Phrase</span>
+<div class="slide" style="background-image: url('slide4.jpg');">
+<span class="caption"><a href="#">Slide 4 Caption Text</a></span>
+<a href="#"></a>
 </div>
+<div class="slide" style="background-image: url('slide5.jpg');">
+<span class="caption"><a href="#">Slide 5 Caption Text</a></span>
+<a href="#"></a>
 </div>
+</div><!--#slider -->
 
+</main>
+
+<link type="text/css" rel="stylesheet" href="jquery.jblslider.css" />
+<script src="jquery-1.11.3.min.js"></script>
+<script src="jquery.jblslider.js"></script>
 <script>
 $("#jblslider").jblSlider({
-	element: '.jblslider',
-	height: 300,
-	duration: 500,
-	delay: 5000
+	animationType: 'fade',
+	width: 1400,
+	height: 400,
+	safe_area: 640,
+	duration: 1000,
+	delay: 5000,
+	resume: 20000
 });
 </script>
 ```
