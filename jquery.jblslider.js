@@ -82,8 +82,8 @@ $.fn.jblSlider = function( options ) {
 			nh = jbl.options.height * p;
 		}
 		
-		$('.slider').css('height', nh +'px');
-		$('.slide').css('background-size', nw +'px');
+		$(jbl).css('height', nh +'px');
+		$(jbl).css('background-size', nw +'px');
 	};
 	
 	this.nav = function() {
@@ -107,8 +107,6 @@ $.fn.jblSlider = function( options ) {
 	this.prepSlides = function(slides) {
 		var loaded = 0;
 		var postaction = function(){};
-		
-		$(jbl.options.element).css('height',jbl.options.height+'px');
 		
 		// prep slide and increment
 		function incImg() {
