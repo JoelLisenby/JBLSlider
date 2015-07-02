@@ -83,7 +83,7 @@ $.fn.jblSlider = function( options ) {
 		}
 		
 		$(jbl).css('height', nh +'px');
-		$(jbl).css('background-size', nw +'px');
+		$('.slide').css('background-size', nw +'px');
 	};
 	
 	this.nav = function() {
