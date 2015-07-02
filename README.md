@@ -4,7 +4,7 @@ A light weight responsive jQuery slider
 Unique features
 ---------------
 * Super light-weight
-* Fixed height until safe-area width is reached, then shrinks.
+* Fixed height until safe-area width is reached, only then does the height begin to scale.
 * Two animations: Fade or Slide
 
 Usage example
