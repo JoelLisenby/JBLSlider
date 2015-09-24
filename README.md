@@ -45,8 +45,6 @@ Live JBLSLider Demo: http://www.joellisenby.com/jblslider/
 <script src="jquery.jblslider.js"></script>
 <script>
 $("#jblslider").jblSlider({
-	width: 1400,
-	height: 400,
 	safe_area: 640,
 	duration: 1000,
 	delay: 5000,

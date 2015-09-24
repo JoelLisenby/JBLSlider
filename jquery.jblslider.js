@@ -47,8 +47,6 @@ $.fn.jblSlider = function( options ) {
 	
 	jbl.init = function(element) {
 		jbl.options = $.extend({
-			width: 1400,
-			height: 400,
 			safe_area: 640,
 			duration: 1000,
 			delay: 5000,
@@ -83,15 +81,17 @@ $.fn.jblSlider = function( options ) {
 	jbl.bgWidth = function() {
 		var current_width = $('main').innerWidth();
 		var p = current_width / jbl.options.safe_area;
-		var nw = jbl.options.width;
-		var nh = jbl.options.height;
+		var nw = jbl.innerWidth;
+		var nh = jbl.innerHeight;
 		if(p <= 1) {
-			nw = jbl.options.width * p;
-			nh = jbl.options.height * p;
+			nw = nw * p;
+			nh = nh * p;
+			$(jbl).css('height', nh +'px');
+			$('.slide').css('background-size', nw +'px');
+		} else {
+			$(jbl).css('height', nh +'px');
+			$('.slide').css('background-size', 'cover');
 		}
-		
-		$(jbl).css('height', nh +'px');
-		$('.slide').css('background-size', nw +'px');
 	};
 	
 	jbl.nav = function() {
