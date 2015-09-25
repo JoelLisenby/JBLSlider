@@ -36,6 +36,7 @@ $.fn.jblSlider = function( options ) {
 	
 	jbl.animating = false;
 	jbl.animationFrame = null;
+	jbl.height = 0;
 	jbl.options = {};
 	jbl.slider = $(jbl);
 	jbl.slides = {};
@@ -52,6 +53,8 @@ $.fn.jblSlider = function( options ) {
 			delay: 5000,
 			resume: 20000
 		}, options);
+		
+		jbl.height = parseFloat($(jbl).css('height'));;
 		
 		jbl.bgWidth();
 		
@@ -79,15 +82,15 @@ $.fn.jblSlider = function( options ) {
 	};
 	
 	jbl.bgWidth = function() {
-		var current_width = $('main').innerWidth();
+		var current_width = $(jbl).innerWidth();
 		var p = current_width / jbl.options.safe_area;
-		var nw = jbl.innerWidth;
-		var nh = jbl.innerHeight;
+		var nw = jbl.innerWidth();
+		var nh = jbl.innerHeight();
 		if(p <= 1) {
-			nw = nw * p;
-			nh = nh * p;
+			nw = jbl.innerWidth() * p;
+			nh = jbl.height * p;
 			$(jbl).css('height', nh +'px');
-			$('.slide').css('background-size', nw +'px');
+			$('.slide').css('background-size', 'auto '+ nh +'px');
 		} else {
 			$(jbl).css('height', nh +'px');
 			$('.slide').css('background-size', 'cover');
