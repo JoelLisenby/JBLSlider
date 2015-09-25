@@ -83,9 +83,10 @@ $.fn.jblSlider = function( options ) {
 	
 	jbl.bgWidth = function() {
 		var current_width = $(jbl).innerWidth();
+		console.log(current_width);
 		var p = current_width / jbl.options.safe_area;
 		var nw = jbl.innerWidth();
-		var nh = jbl.innerHeight();
+		var nh = jbl.height;
 		if(p <= 1) {
 			nw = jbl.innerWidth() * p;
 			nh = jbl.height * p;
